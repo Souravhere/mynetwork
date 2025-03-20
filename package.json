@@ -1,17 +1,19 @@
 {
   "name": "mynetwork",
   "version": "1.0.0",
-  "description": "this is a simple project to show the user network config on the terminal",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "A simple CLI tool for fetching network info",
+  "main": "src/networkInfo.js",
+  "bin": {
+    "netinfo": "bin/cli.js"
   },
-  "author": "Sourav Chhimpa",
-  "license": "ISC",
+  "type": "module",
+  "scripts": {
+    "start": "node bin/cli.js"
+  },
   "dependencies": {
-    "chalk": "^5.4.1",
-    "commander": "^13.1.0",
-    "execa": "^9.5.2",
-    "inquirer": "^12.5.0"
+    "chalk": "^5.2.0",
+    "commander": "^11.0.0",
+    "execa": "^8.0.0",
+    "inquirer": "^9.2.0"
   }
 }
