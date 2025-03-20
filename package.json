@@ -6,7 +6,7 @@
   "bin": {
     "netinfo": "bin/cli.js"
   },
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "node bin/cli.js"
   },
