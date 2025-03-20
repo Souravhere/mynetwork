@@ -1,4 +1,4 @@
-const { execa } = require('execa');
+import { execa } from 'execa';
 import chalk from 'chalk';
 
 // Get Public IP
