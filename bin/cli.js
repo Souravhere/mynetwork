@@ -61,7 +61,7 @@ program
   .action(speedTest);
 
 // Show Credits
-program.addHelpText('after', chalk.magenta('\n💻 Dev by Sourav Chhimpa 🚀'));
+program.addHelpText('after', chalk.magenta('\n💻 Dev by Sourav Chhimpa'));
 
 // Parse CLI args
 program.parse(process.argv);
