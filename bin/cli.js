@@ -1,67 +1,55 @@
 #!/usr/bin/env node
+import { fetchPublicIP, fetchLocalIP, fetchDNSInfo, fetchISPInfo, pingWebsite, speedTest, showCredits } from '../src/networkInfo.js';
+import inquirer from 'inquirer';
 
-import { Command } from 'commander';
-import chalk from 'chalk';
-import figlet from 'figlet';
-import {
-  fetchPublicIP,
-  fetchLocalIP,
-  fetchDNSInfo,
-  fetchISPInfo,
-  pingWebsite,
-  speedTest
-} from '../src/networkInfo.js';
+const runCLI = async () => {
+  console.log('\n🌐 Welcome to MyNetwork CLI 🌐\n');
 
-const program = new Command();
+  const { option } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'option',
+      message: 'Choose an option:',
+      choices: [
+        'Public IP',
+        'Local IP',
+        'DNS Info',
+        'ISP Details',
+        'Ping a Website',
+        'Run Speed Test',
+        'Exit',
+      ],
+    },
+  ]);
 
-// Display Title
-console.log(chalk.blue(figlet.textSync('My Network', { horizontalLayout: 'full' })));
-console.log(chalk.gray('A simple network CLI tool'));
-console.log(chalk.yellow('-----------------------------------'));
+  switch (option) {
+    case 'Public IP':
+      await fetchPublicIP();
+      break;
+    case 'Local IP':
+      await fetchLocalIP();
+      break;
+    case 'DNS Info':
+      await fetchDNSInfo();
+      break;
+    case 'ISP Details':
+      await fetchISPInfo();
+      break;
+    case 'Ping a Website':
+      const { website } = await inquirer.prompt([
+        { type: 'input', name: 'website', message: 'Enter website to ping (default: google.com):', default: 'google.com' },
+      ]);
+      await pingWebsite(website);
+      break;
+    case 'Run Speed Test':
+      await speedTest();
+      break;
+    case 'Exit':
+      console.log(chalk.yellow('\nGoodbye! 👋'));
+      return;
+  }
 
-// Define Commands
-program
-  .version('1.0.0')
-  .description('Network Utility CLI');
+  showCredits();
+};
 
-// Command: Public IP
-program
-  .command('public-ip')
-  .description('Fetch Public IP')
-  .action(fetchPublicIP);
-
-// Command: Local IP
-program
-  .command('local-ip')
-  .description('Fetch Local IP')
-  .action(fetchLocalIP);
-
-// Command: DNS Info
-program
-  .command('dns')
-  .description('Fetch DNS Info')
-  .action(fetchDNSInfo);
-
-// Command: ISP Info
-program
-  .command('isp')
-  .description('Fetch ISP Details')
-  .action(fetchISPInfo);
-
-// Command: Ping
-program
-  .command('ping <website>')
-  .description('Ping a website (default: google.com)')
-  .action(pingWebsite);
-
-// Command: Speed Test
-program
-  .command('speedtest')
-  .description('Run Internet Speed Test')
-  .action(speedTest);
-
-// Show Credits
-program.addHelpText('after', chalk.magenta('\n💻 Dev by Sourav Chhimpa'));
-
-// Parse CLI args
-program.parse(process.argv);
+runCLI();
