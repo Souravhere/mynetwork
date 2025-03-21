@@ -12,8 +12,8 @@ const showLoading = (message) => ora({ text: chalk.cyan(message), spinner: 'dots
 // Fancy ASCII Art Header
 export const showHeader = () => {
   console.clear();
-  console.log(gradient.pastel(figlet.textSync('NetInfo CLI', { horizontalLayout: 'full' })));
-  console.log(chalk.magenta.bold('\n🌍 Your Ultimate Network Toolbox 🌐\n'));
+  console.log(gradient.pastel(figlet.textSync('MyNetwork', { horizontalLayout: 'full' })));
+  console.log(chalk.magenta.bold('\n🌍 Your Ultimate Network Toolbox \n'));
 };
 
 // Utility function to format output
