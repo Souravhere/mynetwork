@@ -5,98 +5,103 @@ import fetch from 'node-fetch';
 import figlet from 'figlet';
 import gradient from 'gradient-string';
 import { createSpinner } from 'nanospinner';
+import os from 'os';
+import speedTest from 'speedtest-net';
 
-// Utility function for loading animation
-const showLoading = (message) => ora({ text: chalk.cyan(message), spinner: 'dots' }).start();
-
-// Fancy ASCII Art Header
+// 🔥 Fancy ASCII Header
 export const showHeader = () => {
   console.clear();
-  console.log(gradient.pastel(figlet.textSync('MyNetwork', { horizontalLayout: 'full' })));
-  console.log(chalk.magenta.bold('\n🌍 Your Ultimate Network Toolbox \n'));
+  console.log(gradient.pastel(figlet.textSync('NetInfo CLI', { horizontalLayout: 'full' })));
+  console.log(chalk.magenta.bold('\n🌍 Your Ultimate Network Toolbox 🌐\n'));
 };
 
-// Utility function to format output
-const formatOutput = (label, value) => chalk.green.bold(`${label}: `) + chalk.white(value);
+// ✅ Utility: Loading Animation
+const showLoading = (message) => ora({ text: chalk.cyan(message), spinner: 'dots' }).start();
 
-// Fetch Public IP
+// ✅ Public IP Fetcher
 export const fetchPublicIP = async () => {
   const spinner = createSpinner('Fetching Public IP...').start();
   try {
-    const { stdout } = await execa('curl', ['-s', 'https://api64.ipify.org']);
-    spinner.success({ text: formatOutput('Public IP', stdout) });
+    const response = await fetch('https://api64.ipify.org?format=json');
+    const data = await response.json();
+    spinner.success({ text: chalk.green.bold(`Public IP: `) + chalk.white(data.ip) });
   } catch (error) {
     spinner.error({ text: chalk.red('Failed to fetch public IP') });
   }
 };
 
-// Fetch Local IP (Cross-Platform)
+// ✅ FIXED: Local IP Fetcher (Cross-Platform)
 export const fetchLocalIP = async () => {
   const spinner = createSpinner('Fetching Local IP...').start();
   try {
-    let stdout;
-    if (process.platform === 'win32') {
-      ({ stdout } = await execa('ipconfig'));
-      const match = stdout.match(/IPv4 Address[.\s]+:\s([\d.]+)/);
-      spinner.success({ text: formatOutput('Local IP', match ? match[1] : 'Unknown') });
-    } else {
-      ({ stdout } = await execa('hostname', ['-I']));
-      spinner.success({ text: formatOutput('Local IP', stdout.split(' ')[0] || 'Unknown') });
-    }
+    const interfaces = os.networkInterfaces();
+    let localIP = 'Unknown';
+    
+    Object.values(interfaces).forEach((iface) => {
+      iface?.forEach((details) => {
+        if (!details.internal && details.family === 'IPv4') {
+          localIP = details.address;
+        }
+      });
+    });
+
+    spinner.success({ text: chalk.green.bold(`Local IP: `) + chalk.white(localIP) });
   } catch (error) {
     spinner.error({ text: chalk.red('Failed to fetch local IP') });
   }
 };
 
-// Fetch DNS Info
+// ✅ DNS Info
 export const fetchDNSInfo = async () => {
   const spinner = createSpinner('Fetching DNS Info...').start();
   try {
     const { stdout } = await execa('nslookup', ['example.com']);
-    const lines = stdout.split('\n');
-    const dnsServer = lines.find((line) => line.includes('Address'))?.split(':')[1]?.trim();
-    spinner.success({ text: formatOutput('DNS Server', dnsServer || 'Unknown') });
+    const dnsServer = stdout.match(/Address: ([\d.]+)/)?.[1] || 'Unknown';
+    spinner.success({ text: chalk.green.bold(`DNS Server: `) + chalk.white(dnsServer) });
   } catch (error) {
     spinner.error({ text: chalk.red('Failed to fetch DNS info') });
   }
 };
 
-// Fetch ISP Info
+// ✅ ISP Info
 export const fetchISPInfo = async () => {
   const spinner = createSpinner('Fetching ISP Info...').start();
   try {
     const response = await fetch('https://ipapi.co/json/');
     const data = await response.json();
-    spinner.success({ text: formatOutput('ISP', data.org || 'Unknown') });
+    spinner.success({ text: chalk.green.bold(`ISP: `) + chalk.white(data.org || 'Unknown') });
   } catch (error) {
     spinner.error({ text: chalk.red('Failed to fetch ISP info') });
   }
 };
 
-// Ping a Website
+// ✅ Ping Website
 export const pingWebsite = async (website = 'google.com') => {
   const spinner = createSpinner(`Pinging ${website}...`).start();
   try {
     const { stdout } = await execa('ping', [process.platform === 'win32' ? '-n' : '-c', '4', website]);
-    const result = stdout.split('\n')[1] || 'No response';
-    spinner.success({ text: formatOutput('Ping Result', result) });
+    spinner.success({ text: chalk.green.bold(`Ping Result: `) + chalk.white(stdout.split('\n')[1] || 'No response') });
   } catch (error) {
     spinner.error({ text: chalk.red('Ping failed') });
   }
 };
 
-// Run Internet Speed Test
-export const speedTest = async () => {
+// ✅ FIXED: Speed Test (Using Official Speedtest API)
+export const runSpeedTest = async () => {
   const spinner = createSpinner('Running Speed Test...').start();
   try {
-    const { stdout } = await execa('speedtest-cli', ['--simple']);
-    spinner.success({ text: formatOutput('Speed Test', stdout) });
+    const test = await speedTest();
+    spinner.success({
+      text: `${chalk.green.bold('Download Speed:')} ${chalk.white(test.download.bandwidth / 125000)} Mbps\n` +
+            `${chalk.green.bold('Upload Speed:')} ${chalk.white(test.upload.bandwidth / 125000)} Mbps\n` +
+            `${chalk.green.bold('Ping:')} ${chalk.white(test.ping.latency)} ms`
+    });
   } catch (error) {
-    spinner.error({ text: chalk.red('Failed to run speed test. Ensure speedtest-cli is installed.') });
+    spinner.error({ text: chalk.red('Speed test failed. Ensure internet is active.') });
   }
 };
 
-// Exit Animation
+// ✅ Exit Animation
 export const showExit = () => {
   console.log(gradient.vice('\n✨ Thank you for using NetInfo CLI! ✨\n'));
 };

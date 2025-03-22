@@ -6,13 +6,13 @@ import {
   fetchDNSInfo, 
   fetchISPInfo, 
   pingWebsite, 
-  speedTest, 
+  runSpeedTest, 
   showHeader, 
   showExit 
 } from '../src/networkInfo.js';
 import chalk from 'chalk';
 
-// Display ASCII Art Header
+// Display Header
 showHeader();
 
 const runCLI = async () => {
@@ -54,7 +54,7 @@ const runCLI = async () => {
         await pingWebsite(website);
         break;
       case '⚡ Run Speed Test':
-        await speedTest();
+        await runSpeedTest();
         break;
       case '❌ Exit':
         showExit();
