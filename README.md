@@ -105,12 +105,3 @@ node bin/cli.js
 ## 💖 Support & Contributions
 
 Feel free to fork, star ⭐, and contribute to make this tool even better.
-
----
-
-Do you also want me to make it **even cooler** by:  
-✅ Adding an ASCII logo at startup  
-✅ Adding a `--help` command  
-✅ Better animations for loading  
-
-If yes, just say "yes" and I will upgrade it for you step by step 🚀
