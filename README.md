@@ -1,7 +1,3 @@
-Sure! Here's a well-crafted and cool `README.md` for **mynetwork**:
-
----
-
 # 🌐 mynetwork
 
 > ⚡ Your Personal Network Utility CLI Tool  
